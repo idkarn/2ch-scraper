@@ -10,3 +10,6 @@ proxies/
 proxies_anonymous/
 proxies_geolocation/
 proxies_geolocation_anonymous/
+
+# extracted data
+proxy/proxies.json

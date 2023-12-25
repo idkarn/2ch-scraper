@@ -1,0 +1,11 @@
+# go
+app/build
+
+# python
+__pycache__
+
+# proxy_scraper_checker
+proxies/
+proxies_anonymous/
+proxies_geolocation/
+proxies_geolocation_anonymous/

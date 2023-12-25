@@ -1,8 +1,9 @@
 # go
-app/build
+app/build/
 
 # python
 __pycache__
+venv/
 
 # proxy_scraper_checker
 proxies/

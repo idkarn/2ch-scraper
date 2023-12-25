@@ -1,1 +1,1 @@
--r proxy-scraper-checker/requirements.txt
+-r lib/psc/requirements.txt

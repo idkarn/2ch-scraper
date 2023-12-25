@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 
 PROXY_CMD="python ./proxy"
 SCRAP_CMD=./app/build/app

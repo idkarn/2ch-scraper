@@ -1,3 +1,8 @@
+## Requirements
+
+- Python 3.10+
+- Go 1.21+
+
 ## Using
 
 ### Install python dependencies

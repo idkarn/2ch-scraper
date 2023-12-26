@@ -5,7 +5,7 @@ import random
 from sanic import Sanic, text
 from proxy import get_proxies
 
-app = Sanic("proxy-manager")
+app = Sanic("proxy-manager", configure_logging=False)
 proxy_list: dict[str, list[str]] = {}
 
 

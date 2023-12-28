@@ -12,6 +12,11 @@ TIMEOUT = 3
 DEFAULT_CHECK_WEBSITE = "http://ifconfig.me/ip"
 
 
+cfg = ConfigParser(interpolation=None)
+cfg.read("./proxy/lib/psc/config.ini", encoding="utf-8")
+psc = ProxyScraperChecker.from_configparser(cfg)
+
+
 async def fetch_source(
     self, *, session: ClientSession, source: str, proto: ProxyType
 ) -> None:
@@ -34,6 +39,21 @@ async def fetch_source(
             proxies_set.add(Proxy(host=proxy.group(1), port=int(proxy.group(2))))
             for proxy in proxies:
                 proxies_set.add(Proxy(host=proxy.group(1), port=int(proxy.group(2))))
+
+
+async def is_working(proto: str, addr: str) -> bool:
+    try:
+        await Proxy(*addr.split(":")).check(
+            website=DEFAULT_CHECK_WEBSITE,
+            sem=psc.sem,
+            cookie_jar=psc.cookie_jar,
+            proto=ProxyType[proto],
+            timeout=psc.timeout,
+            set_geolocation=False,
+        )
+    except Exception:
+        return False
+    return True
 
 
 async def check_proxy(self, *, proxy: Proxy, proto: ProxyType) -> None:
@@ -82,11 +102,6 @@ async def check_proxies(psc: ProxyScraperChecker) -> list[str]:
 
 
 async def get_proxies() -> dict[str, list[str]]:
-    cfg = ConfigParser(interpolation=None)
-    cfg.read("./proxy/lib/psc/config.ini", encoding="utf-8")
-
-    psc = ProxyScraperChecker.from_configparser(cfg)
-
     await fetch_sources(psc)
     await check_proxies(psc)
 

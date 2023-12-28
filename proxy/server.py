@@ -3,7 +3,7 @@ from json import load, dump
 import random
 
 from sanic import Sanic, text
-from proxy import get_proxies
+from proxy import get_proxies, is_working
 
 app = Sanic("proxy-manager", configure_logging=False)
 proxy_list: dict[str, list[str]] = {}
@@ -11,7 +11,16 @@ proxy_list: dict[str, list[str]] = {}
 
 @app.route("/proxy")
 async def proxy(req):
-    return text(random.choice(proxy_list["HTTP"]))
+    proto = "HTTP" if random.random() < 0.5 else "SOCKS5"
+    addr = random.choice(proxy_list[proto])
+
+    while not await is_working(proto, addr):
+        proxy_list[proto].remove(addr)
+
+        proto = "HTTP" if random.random() < 0.5 else "SOCKS5"
+        addr = random.choice(proxy_list[proto])
+
+    return text(f"{proto.lower()}://{addr}")
 
 
 def load_proxy_list() -> dict[str, list[str]] | None:

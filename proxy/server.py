@@ -1,4 +1,3 @@
-import asyncio
 from json import load, dump
 import random
 
@@ -50,9 +49,9 @@ def dump_proxy_list(data: dict) -> None:
 
 
 @app.before_server_start
-def setup(app, loop) -> None:
+async def setup(app, loop) -> None:
     if (pl := load_proxy_list()) is None:
-        pl = asyncio.get_event_loop().run_until_complete(get_proxies())
+        pl = await get_proxies()
         dump_proxy_list(pl)
     proxy_list.update(pl)
 

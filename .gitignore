@@ -1,5 +1,6 @@
 # go
 app/build/
+.env
 
 # python
 __pycache__

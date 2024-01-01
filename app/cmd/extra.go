@@ -14,7 +14,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const PMAPI_URL string = "http://localhost:8000/proxy?p=http&n="
+const PMAPI_URL string = "http://localhost:8000/proxy?n="
 
 func getProxies(proxyListSize int) []string {
 	url := fmt.Sprintf("%s%d", PMAPI_URL, proxyListSize)
@@ -36,31 +36,31 @@ func getProxies(proxyListSize int) []string {
 }
 
 func setup(c *colly.Collector) error {
-	err := godotenv.Load()
+	err := godotenv.Load("app/.env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
-	ua := os.Getenv("USER_AGENT")
-	if ua == "" {
-		panic("USER_AGENT environment variable must be provided")
+	if ua := os.Getenv("USER_AGENT"); ua != "" {
+		c.UserAgent = ua
+	} else {
+		log.Println("USER_AGENT is not provided, using default one")
 	}
-
-	c.UserAgent = ua
 
 	c.Limit(&colly.LimitRule{
 		// Parallelism: 2,
 		RandomDelay: 2 * time.Second,
 	})
 
-	cfCookie := os.Getenv("CF_COOKIE")
-	if cfCookie != "" {
+	if cfCookie := os.Getenv("CF_COOKIE"); cfCookie != "" {
 		c.SetCookies(BASE_URL, []*http.Cookie{
 			{
 				Name:  "cf_clearance",
 				Value: cfCookie,
 			},
 		})
+	} else {
+		log.Println("CF_COOKIE is not provided, cookie won't be set")
 	}
 
 	doUseProxy := flag.Bool("no-proxy", true, "provide to disable proxy usage")

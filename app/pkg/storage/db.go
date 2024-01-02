@@ -12,7 +12,7 @@ type LinkDB struct {
 }
 
 func newDB() *LinkDB {
-	db, err := pogreb.Open("links.db", nil)
+	db, err := pogreb.Open("./app/links.db", nil)
 	if err != nil {
 		log.Fatal(err)
 	}

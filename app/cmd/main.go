@@ -21,8 +21,9 @@ func main() {
 	)
 
 	setupCollector(c)
-	storage.ConfigureDB(c)
 	defer storage.CloseDB()
+	storage.ConfigureDB(c)
+	defer storage.CloseStorage()
 
 	c.OnRequest(func(r *colly.Request) {
 		log.Println("Visiting", r.URL)

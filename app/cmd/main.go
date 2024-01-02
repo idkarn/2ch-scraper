@@ -6,6 +6,7 @@ import (
 
 	"github.com/gocolly/colly/v2"
 	"github.com/gocolly/colly/v2/debug"
+	"github.com/idkarn/2ch-scraper/pkg/storage"
 )
 
 const BASE_URL string = "https://2ch.hk"
@@ -19,7 +20,9 @@ func main() {
 		colly.AllowedDomains(DOMAINS...),
 	)
 
-	setup(c)
+	setupCollector(c)
+	storage.ConfigureDB(c)
+	defer storage.CloseDB()
 
 	c.OnRequest(func(r *colly.Request) {
 		log.Println("Visiting", r.URL)

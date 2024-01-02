@@ -35,7 +35,7 @@ func getProxies(proxyListSize int) []string {
 	return []string{string(addr[:])}
 }
 
-func setup(c *colly.Collector) error {
+func setupCollector(c *colly.Collector) error {
 	err := godotenv.Load("app/.env")
 	if err != nil {
 		log.Fatal("Error loading .env file")

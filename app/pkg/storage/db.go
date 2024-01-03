@@ -3,15 +3,18 @@ package storage
 import (
 	"encoding/binary"
 	"log"
+	"net/http/cookiejar"
 	"net/url"
 
 	"github.com/akrylysov/pogreb"
+	cs "github.com/gocolly/colly/v2/storage"
 )
 
 const DB_PATH = "./app/links.db"
 
 type LinkDB struct {
 	conn *pogreb.DB
+	jar  *cookiejar.Jar
 }
 
 func newDB() *LinkDB {
@@ -19,7 +22,11 @@ func newDB() *LinkDB {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return &LinkDB{db}
+	jar, err := cookiejar.New(nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return &LinkDB{db, jar}
 }
 
 func uint64ToBytes(val uint64) []byte {
@@ -33,6 +40,12 @@ func (db *LinkDB) Init() error {
 	if db.conn == nil {
 		db.conn, err = pogreb.Open(DB_PATH, nil)
 	}
+	if err != nil {
+		return err
+	}
+	if db.jar == nil {
+		db.jar, err = cookiejar.New(nil)
+	}
 	return err
 }
 
@@ -45,9 +58,9 @@ func (db *LinkDB) IsVisited(requestID uint64) (bool, error) {
 }
 
 func (db *LinkDB) Cookies(u *url.URL) string {
-	return ""
+	return cs.StringifyCookies(db.jar.Cookies(u))
 }
 
 func (db *LinkDB) SetCookies(u *url.URL, cookie string) {
-
+	db.jar.SetCookies(u, cs.UnstringifyCookies(cookie))
 }

@@ -41,7 +41,9 @@ func SaveText(text string) {
 }
 
 func CloseStorage() {
-	storage.file.Close()
+	if err := storage.file.Close(); err != nil {
+		log.Println("could not close file with data")
+	}
 
 	f, err := os.OpenFile(LINE_PATH, os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -50,8 +52,11 @@ func CloseStorage() {
 	if err = binary.Write(f, binary.NativeEndian, storage.size); err != nil {
 		log.Printf("could not save storage size (%d) in file", storage.size)
 	}
+
+	log.Println("TextStorage successfuly closed")
 }
 
 func CloseDB() {
 	db.conn.Close()
+	log.Println("LinksDB successfuly closed")
 }

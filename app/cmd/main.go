@@ -21,8 +21,9 @@ func main() {
 	)
 
 	setupCollector(c)
-	defer storage.CloseDB()
 	storage.ConfigureDB(c)
+	defer storage.CloseDB()
+	storage.SetupStorage()
 	defer storage.CloseStorage()
 
 	c.OnRequest(func(r *colly.Request) {

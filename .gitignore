@@ -14,3 +14,5 @@ proxies_geolocation_anonymous/
 
 # extracted data
 proxy/proxies.json
+app/data/
+app/links.db

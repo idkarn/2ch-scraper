@@ -3,6 +3,7 @@ import random
 
 from sanic import Sanic, json, Request
 from proxy import get_proxies, is_working
+from traceback import print_exc
 
 app = Sanic("proxy-manager", configure_logging=False)
 proxy_list: dict[str, list[str]] = {}
@@ -44,8 +45,12 @@ def load_proxy_list() -> dict[str, list[str]] | None:
 
 
 def dump_proxy_list(data: dict) -> None:
-    with open("./proxy/proxies.json", "w") as f:
-        dump(data, f)
+    try:
+        with open("./proxy/proxies.json", "w") as f:
+            dump(data, f)
+    except Exception as e:
+        print("failed to save the proxy list to a file")
+        print_exc()
 
 
 @app.before_server_start
